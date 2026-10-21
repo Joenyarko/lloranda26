@@ -1,7 +1,7 @@
 /* ==========================================================================
    Lloyd Jackson & Miranda Blankson Wedding (#lloranda26)
    Interactive Scripts: Slideshow, Timers, Tabs, Reception Reveal & RSVP
-   Date: Friday, December 4, 2026 | 12:30 PM GMT
+   Date: Friday, December 4, 2026 | 12:00 PM GMT
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,10 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* --------------------------------------------------------------------------
    1. Wedding Ceremony Countdown Timer
-   Target: Friday, December 4, 2026, 12:30:00 GMT
+   Target: Friday, December 4, 2026, 12:00:00 GMT
    -------------------------------------------------------------------------- */
 function initCountdown() {
-    const targetDate = new Date(Date.UTC(2026, 11, 4, 12, 30, 0)).getTime();
+    const targetDate = new Date(Date.UTC(2026, 11, 4, 12, 0, 0)).getTime();
 
     const daysEl = document.getElementById('days');
     const hoursEl = document.getElementById('hours');
@@ -174,10 +174,10 @@ function initMobileMenu() {
 
 /* --------------------------------------------------------------------------
    5. Reception Location Time-Lock & Reveal
-   Target Reveal: Friday, December 4, 2026, 13:30:00 GMT (1:30 PM GMT)
+   Target Reveal: Friday, December 4, 2026, 13:00:00 GMT (1:00 PM GMT)
    -------------------------------------------------------------------------- */
 function initReceptionLockCountdown() {
-    const unlockTime = new Date(Date.UTC(2026, 11, 4, 13, 30, 0)).getTime();
+    const unlockTime = new Date(Date.UTC(2026, 11, 4, 13, 0, 0)).getTime();
 
     const lockedState = document.getElementById('reception-locked-state');
     const unlockedState = document.getElementById('reception-unlocked-state');
