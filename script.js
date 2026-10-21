@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initReceptionLockCountdown();
     initGalleryLightbox();
     initCopyButtons();
-    initRSVPForm();
 });
 
 /* --------------------------------------------------------------------------
@@ -187,12 +186,6 @@ function initReceptionLockCountdown() {
     const recMinutes = document.getElementById('rec-minutes');
     const recSeconds = document.getElementById('rec-seconds');
 
-    const previewToggleBtn = document.getElementById('preview-toggle-btn');
-    const lockToggleBtn = document.getElementById('lock-toggle-btn');
-
-    // Check session storage for preview state
-    let isTestRevealed = sessionStorage.getItem('test_reception_revealed') === 'true';
-
     function setReceptionVisibility(isRevealed) {
         if (!lockedState || !unlockedState) return;
 
@@ -205,41 +198,7 @@ function initReceptionLockCountdown() {
         }
     }
 
-    // Toggle button for testing reveal
-    if (previewToggleBtn) {
-        previewToggleBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            isTestRevealed = true;
-            sessionStorage.setItem('test_reception_revealed', 'true');
-            setReceptionVisibility(true);
-
-            // Optional celebratory confetti
-            if (typeof confetti === 'function') {
-                confetti({
-                    particleCount: 50,
-                    spread: 60,
-                    origin: { y: 0.6 },
-                    colors: ['#2563eb', '#10266e', '#60a5fa', '#faf6ee', '#d4af37']
-                });
-            }
-        });
-    }
-
-    if (lockToggleBtn) {
-        lockToggleBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            isTestRevealed = false;
-            sessionStorage.removeItem('test_reception_revealed');
-            setReceptionVisibility(false);
-        });
-    }
-
     function updateReceptionTimer() {
-        if (isTestRevealed) {
-            setReceptionVisibility(true);
-            return;
-        }
-
         const now = new Date().getTime();
         const difference = unlockTime - now;
 
@@ -352,36 +311,3 @@ function initCopyButtons() {
     });
 }
 
-/* --------------------------------------------------------------------------
-   8. RSVP & Wishes Form Submission
-   -------------------------------------------------------------------------- */
-function initRSVPForm() {
-    const form = document.getElementById('rsvp-form');
-    const successMsg = document.getElementById('rsvp-success-message');
-
-    if (!form || !successMsg) return;
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('rsvp-name')?.value || 'Cherished Guest';
-
-        successMsg.innerHTML = `<i class="fas fa-heart" style="color:var(--burnt-orange); margin-right:6px;"></i> Thank you, <strong>${name}</strong>! Your RSVP and heartfelt wishes have been received with love!`;
-        successMsg.style.display = 'block';
-
-        // Confetti celebration
-        if (typeof confetti === 'function') {
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#2563eb', '#10266e', '#60a5fa', '#faf6ee', '#d4af37']
-            });
-        }
-
-        form.reset();
-
-        setTimeout(() => {
-            successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 100);
-    });
-}
