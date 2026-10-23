@@ -105,6 +105,8 @@ body.home-page {
 .hero-slide-2 { background-image: url('images/moment_formal.jpg'); }
 .hero-slide-3 { background-image: url('images/moment_bridge.jpg'); }
 .hero-slide-4 { background-image: url('images/moment_trad.jpg'); }
+.hero-slide-5 { background-image: url('images/moment_suit.jpg'); }
+.hero-slide-6 { background-image: url('images/moment_vibrant.jpg'); }
 
 /* Royal Blue Atmospheric Overlay */
 .hero-overlay {
