@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initReceptionLockCountdown();
     initGalleryLightbox();
     initCopyButtons();
+    initSongLyricsModal();
+    initProgramSubnav();
 });
 
 /* --------------------------------------------------------------------------
@@ -128,8 +130,8 @@ function initTabs() {
         });
     });
 
-    // Check initial hash on load (e.g., program.html#venue)
-    function handleInitialHash() {
+    // Check initial hash on load (e.g., program.html#venue or program.html#program)
+    function handleInitialHash(isInitial = false) {
         const hash = window.location.hash.replace('#', '').trim().toLowerCase();
         if (hash) {
             const matchedTab = document.getElementById(`tab-${hash}`);
@@ -137,16 +139,30 @@ function initTabs() {
                 activateTab(`tab-${hash}`, false);
                 return;
             }
+            // Check if hash matches an element inside a tab (e.g. #prog-service)
+            const matchedEl = document.getElementById(hash);
+            if (matchedEl) {
+                const parentTab = matchedEl.closest('.tab-content');
+                if (parentTab) {
+                    activateTab(parentTab.id, false);
+                    setTimeout(() => {
+                        matchedEl.scrollIntoView({ behavior: 'smooth' });
+                    }, 150);
+                    return;
+                }
+            }
         }
-        // Default to The Couple tab
-        activateTab('tab-couple', false);
+        if (isInitial) {
+            // Default to The Couple tab on initial load
+            activateTab('tab-couple', false);
+        }
     }
 
-    handleInitialHash();
+    handleInitialHash(true);
 
     // Listen to hash change (back/forward browser buttons)
     window.addEventListener('hashchange', () => {
-        handleInitialHash();
+        handleInitialHash(false);
     });
 }
 
@@ -307,6 +323,181 @@ function initCopyButtons() {
             }).catch(() => {
                 alert(`Please copy manually: ${textToCopy}`);
             });
+        });
+    });
+}
+
+/* --------------------------------------------------------------------------
+   8. Song Lyrics Modal (Opening & Closing Songs)
+   -------------------------------------------------------------------------- */
+function initSongLyricsModal() {
+    const modal = document.getElementById('lyricsModal');
+    if (!modal) return;
+
+    const closeBtn = document.getElementById('lyricsClose');
+    const closeBtnBottom = document.getElementById('lyricsCloseBtnBottom');
+    const songTypeEl = document.getElementById('lyricsSongType');
+    const songTitleEl = document.getElementById('lyricsSongTitle');
+    const songScriptureEl = document.getElementById('lyricsSongScripture');
+    const lyricsBodyEl = document.getElementById('lyricsBody');
+    const tabSong131 = document.getElementById('tabSong131');
+    const tabSong132 = document.getElementById('tabSong132');
+
+    const songs = {
+        '131': {
+            type: 'OPENING SONG — SONG 131',
+            title: '“WHAT GOD HAS YOKED TOGETHER”',
+            scripture: '(Matthew 19:5, 6)',
+            content: `
+                <div class="lyrics-stanza">
+                    <span class="stanza-number">1</span>
+                    <p>
+                        With dignity and joy,<br>
+                        A threefold cord is bound.<br>
+                        With God and men to witness,<br>
+                        These sacred vows resound.
+                    </p>
+                </div>
+
+                <div class="lyrics-chorus">
+                    <span class="chorus-label">Chorus 1</span>
+                    <p>
+                        He vowed before Jehovah<br>
+                        To love her from the heart.<br>
+                        What God has yoked together,<br>
+                        Let no man put apart.
+                    </p>
+                </div>
+
+                <div class="lyrics-stanza">
+                    <span class="stanza-number">2</span>
+                    <p>
+                        They both have searched God's Word<br>
+                        To learn to do his will<br>
+                        And now they seek his blessing,<br>
+                        Their promise to fulfill.
+                    </p>
+                </div>
+
+                <div class="lyrics-chorus">
+                    <span class="chorus-label">Chorus 2</span>
+                    <p>
+                        She vowed before Jehovah<br>
+                        To love him from the heart.<br>
+                        What God has yoked together,<br>
+                        Let no man put apart.
+                    </p>
+                </div>
+            `
+        },
+        '132': {
+            type: 'CLOSING SONG — SONG 132',
+            title: '“NOW WE ARE ONE”',
+            scripture: '(Genesis 2:23, 24)',
+            content: `
+                <div class="lyrics-stanza">
+                    <span class="stanza-number">1</span>
+                    <p>
+                        This is at last bone of my bone,<br>
+                        Flesh of my flesh; now I'm not alone.<br>
+                        God has provided a partner,<br>
+                        Someone to call my own.<br><br>
+                        Now we are one; now there can be<br>
+                        Blessings to share for you and for me.<br>
+                        As man and woman together,<br>
+                        We are a family.<br><br>
+                        Ev'ry day we'll serve our God above.<br>
+                        As he shows the way,<br>
+                        Unfailing love we'll display.<br><br>
+                        As we have vowed, so may it be.<br>
+                        Seasons of joy, may we come to see.<br>
+                        Oh, may we honor Jehovah,<br>
+                        And may you always be my love.
+                    </p>
+                </div>
+            `
+        }
+    };
+
+    function renderSong(id) {
+        const data = songs[id];
+        if (!data) return;
+
+        if (songTypeEl) songTypeEl.textContent = data.type;
+        if (songTitleEl) songTitleEl.textContent = data.title;
+        if (songScriptureEl) songScriptureEl.textContent = data.scripture;
+        if (lyricsBodyEl) lyricsBodyEl.innerHTML = data.content;
+
+        if (tabSong131 && tabSong132) {
+            if (id === '131') {
+                tabSong131.classList.add('active');
+                tabSong132.classList.remove('active');
+            } else {
+                tabSong132.classList.add('active');
+                tabSong131.classList.remove('active');
+            }
+        }
+    }
+
+    function openModal(id) {
+        renderSong(id);
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // Attach click listeners to all song triggers
+    document.querySelectorAll('[data-song-modal]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = btn.getAttribute('data-song-modal') || '131';
+            openModal(id);
+        });
+    });
+
+    if (tabSong131) tabSong131.addEventListener('click', () => renderSong('131'));
+    if (tabSong132) tabSong132.addEventListener('click', () => renderSong('132'));
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (closeBtnBottom) closeBtnBottom.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal || e.target.classList.contains('lyrics-modal-backdrop')) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+}
+
+/* --------------------------------------------------------------------------
+   9. Program Sub-Navigation Smooth Scroll
+   -------------------------------------------------------------------------- */
+function initProgramSubnav() {
+    const pillButtons = document.querySelectorAll('.prog-pill-btn');
+    if (!pillButtons.length) return;
+
+    pillButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = btn.getAttribute('data-scroll-to');
+            if (!targetId) return;
+
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                pillButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
         });
     });
 }
