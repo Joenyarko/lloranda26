@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCopyButtons();
     initSongLyricsModal();
     initProgramSubnav();
+    initKhconfPlaceholder();
 });
 
 /* --------------------------------------------------------------------------
@@ -499,6 +500,22 @@ function initProgramSubnav() {
                 btn.classList.add('active');
             }
         });
+    });
+}
+
+/* --------------------------------------------------------------------------
+   10. KHCONF Link Placeholder Guard
+   -------------------------------------------------------------------------- */
+function initKhconfPlaceholder() {
+    const khconfBtn = document.getElementById('khconfLink');
+    if (!khconfBtn) return;
+
+    khconfBtn.addEventListener('click', (e) => {
+        const href = khconfBtn.getAttribute('href');
+        if (!href || href === '#' || href.startsWith('#') || href.includes('YOUR_KHCONF')) {
+            e.preventDefault();
+            alert('The KHCONF streaming link will be available here closer to the ceremony date. Please check back soon!');
+        }
     });
 }
 
